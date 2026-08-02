@@ -420,24 +420,56 @@
 
   /* ============ FAQ ============ */
   .faq-list{display:flex; flex-direction:column; gap:14px; max-width:760px;}
-  .faq-item{border:1px solid var(--panel-border); border-radius:var(--radius-md); background:var(--panel-2); overflow:hidden;}
-  .faq-item summary{
-    list-style:none; cursor:pointer; padding:20px 24px; display:flex; justify-content:space-between; align-items:center;
-    font-weight:700; font-size:15px;
+  .faq-item{border:1px solid var(--panel-border); border-radius:var(--radius-md); background:var(--panel-2); overflow:hidden; transition:border-color .3s ease;}
+  .faq-item.open{border-color:rgba(201,162,109,.4);}
+  .faq-item .faq-q{
+    width:100%; background:none; border:none; text-align:left; color:var(--white);
+    cursor:pointer; padding:20px 24px; display:flex; justify-content:space-between; align-items:center;
+    font-weight:700; font-size:15px; font-family:inherit;
   }
-  .faq-item summary::-webkit-details-marker{display:none;}
-  .faq-item summary .plus{
+  .faq-item .faq-q .plus{
     width:20px; height:20px; border-radius:50%; border:1px solid var(--panel-border);
     display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-left:16px;
-    position:relative;
+    position:relative; transition:border-color .25s ease, background .25s ease;
   }
-  .faq-item summary .plus::before, .faq-item summary .plus::after{
+  .faq-item .faq-q .plus::before, .faq-item .faq-q .plus::after{
     content:""; position:absolute; background:var(--blue-light);
   }
-  .faq-item summary .plus::before{width:9px; height:1.4px;}
-  .faq-item summary .plus::after{width:1.4px; height:9px; transition:transform .25s ease;}
-  .faq-item[open] summary .plus::after{transform:rotate(90deg); opacity:0;}
-  .faq-item .faq-a{padding:0 24px 22px; font-size:14px; color:var(--muted); max-width:640px;}
+  .faq-item .faq-q .plus::before{width:9px; height:1.4px;}
+  .faq-item .faq-q .plus::after{width:1.4px; height:9px; transition:transform .25s ease;}
+  .faq-item.open .faq-q .plus::after{transform:rotate(90deg); opacity:0;}
+  .faq-item.open .faq-q .plus{border-color:var(--gold); background:rgba(201,162,109,.12);}
+  .faq-a-wrap{max-height:0; overflow:hidden; transition:max-height .45s cubic-bezier(.4,0,.2,1);}
+  .faq-item .faq-a{padding:0 24px 22px; font-size:14px; color:var(--muted); max-width:640px; min-height:1em;}
+  .faq-item .faq-a.typing::after{
+    content:"▍"; color:var(--gold-light); margin-left:2px; animation:faqCursor .8s steps(1) infinite;
+  }
+  @keyframes faqCursor{ 50%{ opacity:0; } }
+
+  /* ============ INTERAÇÕES GERAIS ============ */
+  .scroll-progress{position:fixed; top:0; left:0; width:100%; height:3px; z-index:150; background:transparent;}
+  .scroll-progress-bar{height:100%; width:0%; background:linear-gradient(90deg, var(--gold), var(--blue-light)); box-shadow:0 0 10px rgba(122,162,255,.5);}
+
+  .adv-card, .model-card, .format-card, .testi-card, .step{ position:relative; }
+  .adv-card::before, .model-card::before, .format-card::before, .testi-card::before, .step::before{
+    content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+    background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%), rgba(201,162,109,.16), transparent 70%);
+    opacity:0; transition:opacity .35s ease; z-index:0;
+  }
+  .adv-card:hover::before, .model-card:hover::before, .format-card:hover::before, .testi-card:hover::before, .step:hover::before{ opacity:1; }
+
+  .btn{position:relative; overflow:hidden;}
+  .ripple{
+    position:absolute; border-radius:50%; background:rgba(255,255,255,.5);
+    transform:scale(0); pointer-events:none; animation:rippleAnim .6s ease-out forwards;
+  }
+  @keyframes rippleAnim{ to{ transform:scale(2.6); opacity:0; } }
+
+  .invite-mock{ transition:transform .12s ease-out; will-change:transform; }
+
+  @media (prefers-reduced-motion: reduce){
+    .btn, .invite-mock{ transition:none; }
+  }
 
   /* ============ CTA BANNER ============ */
   .cta-banner{
@@ -514,6 +546,8 @@
 </style>
 </head>
 <body class="locked">
+
+<div class="scroll-progress"><div class="scroll-progress-bar" id="scrollProgressBar"></div></div>
 
 <!-- ===================== INTRO LOADER ===================== -->
 <div class="intro-loader" id="introLoader">
@@ -860,26 +894,46 @@
         <h2>Perguntas e respostas</h2>
       </div>
       <div class="faq-list">
-        <details class="faq-item reveal">
-          <summary>Quanto tempo leva para ficar pronto? <span class="plus"></span></summary>
-          <p class="faq-a">Em média de 3 a 7 dias úteis após o briefing, dependendo da complexidade do projeto e do plano escolhido.</p>
-        </details>
-        <details class="faq-item reveal">
-          <summary>Preciso entender de tecnologia para usar? <span class="plus"></span></summary>
-          <p class="faq-a">Não. Você só participa do briefing e recebe o link pronto — nós cuidamos de toda a parte técnica.</p>
-        </details>
-        <details class="faq-item reveal">
-          <summary>Funciona direto pelo WhatsApp? <span class="plus"></span></summary>
-          <p class="faq-a">Sim. O convite pode ser enviado por link no WhatsApp, redes sociais ou e-mail, sem limite de convidados.</p>
-        </details>
-        <details class="faq-item reveal">
-          <summary>Posso editar depois que o convite estiver pronto? <span class="plus"></span></summary>
-          <p class="faq-a">Pequenos ajustes de texto e data podem ser feitos após a entrega. Alterações maiores de design são orçadas à parte.</p>
-        </details>
-        <details class="faq-item reveal">
-          <summary>Quais as formas de pagamento? <span class="plus"></span></summary>
-          <p class="faq-a">Combinamos a forma de pagamento diretamente no orçamento, de acordo com o plano e o prazo do seu evento.</p>
-        </details>
+        <div class="faq-item reveal">
+          <button class="faq-q" aria-expanded="false">
+            <span>Quanto tempo leva para ficar pronto?</span><span class="plus"></span>
+          </button>
+          <div class="faq-a-wrap">
+            <p class="faq-a" data-full="Em média de 3 a 7 dias úteis após o briefing, dependendo da complexidade do projeto e do plano escolhido."></p>
+          </div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-q" aria-expanded="false">
+            <span>Preciso entender de tecnologia para usar?</span><span class="plus"></span>
+          </button>
+          <div class="faq-a-wrap">
+            <p class="faq-a" data-full="Não. Você só participa do briefing e recebe o link pronto — nós cuidamos de toda a parte técnica."></p>
+          </div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-q" aria-expanded="false">
+            <span>Funciona direto pelo WhatsApp?</span><span class="plus"></span>
+          </button>
+          <div class="faq-a-wrap">
+            <p class="faq-a" data-full="Sim. O convite pode ser enviado por link no WhatsApp, redes sociais ou e-mail, sem limite de convidados."></p>
+          </div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-q" aria-expanded="false">
+            <span>Posso editar depois que o convite estiver pronto?</span><span class="plus"></span>
+          </button>
+          <div class="faq-a-wrap">
+            <p class="faq-a" data-full="Pequenos ajustes de texto e data podem ser feitos após a entrega. Alterações maiores de design são orçadas à parte."></p>
+          </div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-q" aria-expanded="false">
+            <span>Quais as formas de pagamento?</span><span class="plus"></span>
+          </button>
+          <div class="faq-a-wrap">
+            <p class="faq-a" data-full="Combinamos a forma de pagamento diretamente no orçamento, de acordo com o plano e o prazo do seu evento."></p>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -1104,6 +1158,106 @@
   function closePreviewModal(){ previewModal.classList.remove('open'); }
   document.getElementById('closePreview').addEventListener('click', closePreviewModal);
   previewModal.addEventListener('click', (e)=>{ if(e.target === previewModal) closePreviewModal(); });
+
+  /* ---------- SCROLL PROGRESS BAR ---------- */
+  const scrollBar = document.getElementById('scrollProgressBar');
+  function updateScrollBar(){
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = docHeight > 0 ? (window.scrollY / docHeight) * 100 : 0;
+    scrollBar.style.width = pct + '%';
+  }
+  window.addEventListener('scroll', updateScrollBar);
+  updateScrollBar();
+
+  /* ---------- SPOTLIGHT NOS CARDS ---------- */
+  document.querySelectorAll('.adv-card, .model-card, .format-card, .testi-card, .step').forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      card.style.setProperty('--mx', (e.clientX - rect.left) + 'px');
+      card.style.setProperty('--my', (e.clientY - rect.top) + 'px');
+    });
+  });
+
+  /* ---------- RIPPLE NOS BOTÕES ---------- */
+  document.querySelectorAll('.btn').forEach(btn => {
+    btn.addEventListener('click', function(e){
+      const rect = this.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      const ripple = document.createElement('span');
+      ripple.className = 'ripple';
+      ripple.style.width = ripple.style.height = size + 'px';
+      ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+      ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+      this.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 650);
+    });
+  });
+
+  /* ---------- TILT NO CARD DO CONVITE (HERO) ---------- */
+  const heroMock = document.querySelector('.invite-mock');
+  if(heroMock && !reduceMotion){
+    heroMock.addEventListener('mousemove', (e) => {
+      const rect = heroMock.getBoundingClientRect();
+      const px = (e.clientX - rect.left) / rect.width - 0.5;
+      const py = (e.clientY - rect.top) / rect.height - 0.5;
+      heroMock.style.transform = `perspective(900px) rotateY(${px * 9}deg) rotateX(${-py * 9}deg) translateY(-2px)`;
+    });
+    heroMock.addEventListener('mouseleave', () => { heroMock.style.transform = ''; });
+  }
+
+  /* ---------- FAQ COM EFEITO DE DIGITAÇÃO AO VIVO ---------- */
+  document.querySelectorAll('.faq-item').forEach(item => {
+    const btn = item.querySelector('.faq-q');
+    const wrap = item.querySelector('.faq-a-wrap');
+    const para = item.querySelector('.faq-a');
+    const fullText = para.dataset.full;
+    let typeTimer = null;
+
+    function typeAnswer(){
+      clearInterval(typeTimer);
+      para.textContent = '';
+      para.classList.add('typing');
+      if(reduceMotion){
+        para.textContent = fullText;
+        para.classList.remove('typing');
+        return;
+      }
+      let i = 0;
+      typeTimer = setInterval(() => {
+        i++;
+        para.textContent = fullText.slice(0, i);
+        if(i >= fullText.length){
+          clearInterval(typeTimer);
+          para.classList.remove('typing');
+        }
+      }, 14);
+    }
+
+    btn.addEventListener('click', () => {
+      const isOpen = item.classList.contains('open');
+
+      document.querySelectorAll('.faq-item.open').forEach(other => {
+        if(other !== item){
+          other.classList.remove('open');
+          other.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
+          other.querySelector('.faq-a-wrap').style.maxHeight = '0px';
+          clearInterval(typeTimer);
+        }
+      });
+
+      if(isOpen){
+        item.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+        wrap.style.maxHeight = '0px';
+        clearInterval(typeTimer);
+      } else {
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+        wrap.style.maxHeight = '400px';
+        typeAnswer();
+      }
+    });
+  });
 </script>
 </body>
 </html>
