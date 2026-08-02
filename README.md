@@ -1,1 +1,1109 @@
-# sites
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jc Convites | Convites Digitais Interativos</title>
+<meta name="description" content="Convites digitais modernos com RSVP, mapa, lista de presentes e efeitos visuais. Casamentos, aniversários, debutantes e chá de bebê.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#080d1a;
+    --panel:#0f1830;
+    --panel-2:#141f3d;
+    --panel-border: rgba(247,248,252,0.09);
+    --blue:#2f6fed;
+    --blue-light:#7aa2ff;
+    --blue-deep:#1c3f9c;
+    --gold:#c9a26d;
+    --gold-light:#e3caa0;
+    --white:#f7f8fc;
+    --muted:#8c93a8;
+    --muted-2:#5e6683;
+    --radius-lg:22px;
+    --radius-md:14px;
+    --radius-sm:8px;
+    --shadow: 0 24px 60px -24px rgba(0,0,0,0.6);
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--ink);
+    color:var(--white);
+    font-family:'Manrope', sans-serif;
+    line-height:1.55;
+    overflow-x:hidden;
+  }
+  body.locked{overflow:hidden; height:100vh;}
+
+  h1,h2,h3,h4{font-family:'Fraunces', serif; font-weight:600; letter-spacing:-0.01em;}
+  a{color:inherit; text-decoration:none;}
+  img,svg{display:block;}
+  button{font-family:inherit; cursor:pointer;}
+  ul{list-style:none;}
+
+  .wrap{max-width:1180px; margin:0 auto; padding:0 28px;}
+  .eyebrow{
+    text-transform:uppercase;
+    font-size:12.5px;
+    letter-spacing:0.16em;
+    font-weight:700;
+    color:var(--gold);
+    display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:22px; height:1.5px;
+    background:var(--gold);
+    display:inline-block;
+  }
+
+  /* ============ INTRO LOADER ============ */
+  .intro-loader{
+    position:fixed; inset:0; z-index:999;
+    background:radial-gradient(circle at 50% 40%, #0d1530 0%, #060a15 70%);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:28px;
+    transition:opacity .9s ease, visibility .9s ease;
+  }
+  .intro-loader.hide{opacity:0; visibility:hidden; pointer-events:none;}
+  .intro-wordmark{
+    text-align:center;
+    opacity:0; transform:translateY(10px);
+    animation:fadeUp .8s ease forwards; animation-delay:1.9s;
+  }
+  .intro-wordmark .jc{
+    font-family:'Fraunces',serif; font-weight:600; font-size:clamp(28px,5vw,38px);
+    color:var(--white); letter-spacing:.01em;
+  }
+  .intro-wordmark small{
+    display:block; margin-top:6px;
+    color:var(--gold-light); font-size:12px; letter-spacing:0.22em; text-transform:uppercase; font-weight:600;
+  }
+
+  /* ---- Emblem (JC monogram) ---- */
+  .emblem{width:min(48vw,220px); height:auto; overflow:visible;}
+  .emblem circle.ring{
+    fill:none; stroke:var(--gold); stroke-width:1.4;
+  }
+  .emblem circle.ring-outer{
+    stroke-dasharray:691; stroke-dashoffset:691;
+    animation:ringDraw 1.4s cubic-bezier(.65,.05,.2,1) forwards; animation-delay:.1s;
+  }
+  .emblem circle.ring-inner{
+    stroke-dasharray:597; stroke-dashoffset:597;
+    animation:ringDraw 1.4s cubic-bezier(.65,.05,.2,1) forwards; animation-delay:.35s;
+  }
+  @keyframes ringDraw{ to{ stroke-dashoffset:0; } }
+
+  .emblem .ornament{
+    fill:none; stroke:var(--gold); stroke-width:1.2;
+    opacity:0; transform-box:fill-box; transform-origin:center;
+    animation:ornamentIn .5s ease forwards;
+  }
+  .emblem .ornament.o1{animation-delay:1.05s;}
+  .emblem .ornament.o2{animation-delay:1.15s;}
+  .emblem .ornament.o3{animation-delay:1.25s;}
+  .emblem .ornament.o4{animation-delay:1.35s;}
+  @keyframes ornamentIn{
+    from{opacity:0; transform:scale(.3) rotate(45deg);}
+    to{opacity:1; transform:scale(1) rotate(45deg);}
+  }
+
+  .emblem .sparkle{
+    fill:var(--gold-light); opacity:0; transform-box:fill-box; transform-origin:center;
+    animation:sparkleIn .5s ease forwards, sparkleTwinkle 2.6s ease-in-out infinite;
+  }
+  .emblem .sparkle.s1{animation-delay:1.5s, 2.1s;}
+  .emblem .sparkle.s2{animation-delay:1.65s, 2.3s;}
+  .emblem .sparkle.s3{animation-delay:1.8s, 2.5s;}
+  @keyframes sparkleIn{ from{opacity:0; transform:scale(0);} to{opacity:1; transform:scale(1);} }
+  @keyframes sparkleTwinkle{ 0%,100%{opacity:.5; transform:scale(.85);} 50%{opacity:1; transform:scale(1.05);} }
+
+  .emblem .jc-letters{
+    font-family:'Fraunces',serif; font-weight:600; fill:var(--gold);
+    opacity:0; transform-box:fill-box; transform-origin:center;
+    animation:lettersIn .7s cubic-bezier(.2,.8,.3,1.2) forwards; animation-delay:.75s;
+  }
+  @keyframes lettersIn{
+    from{opacity:0; transform:scale(.7);}
+    to{opacity:1; transform:scale(1);}
+  }
+
+  @keyframes fadeUp{
+    from{opacity:0; transform:translateY(8px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+  .intro-loader .skip{
+    position:absolute; bottom:26px; right:26px;
+    font-size:12px; color:var(--muted-2); letter-spacing:.05em;
+    border:1px solid var(--panel-border); padding:8px 14px; border-radius:100px;
+    opacity:0; animation:fadeUp .6s ease forwards; animation-delay:1s;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .emblem circle.ring, .emblem .ornament, .emblem .sparkle, .emblem .jc-letters, .intro-wordmark{
+      animation:none !important; opacity:1 !important; stroke-dashoffset:0 !important; transform:none !important;
+    }
+    html{scroll-behavior:auto;}
+  }
+
+  /* ============ NAV ============ */
+  header{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    padding:18px 0;
+    background:rgba(8,13,26,0.55);
+    backdrop-filter:blur(14px);
+    border-bottom:1px solid transparent;
+    transition:border-color .3s ease, background .3s ease;
+  }
+  header.scrolled{border-color:var(--panel-border); background:rgba(8,13,26,0.85);}
+  nav{display:flex; align-items:center; justify-content:space-between;}
+  .brand{display:flex; align-items:center; gap:10px; font-family:'Fraunces',serif; font-size:20px; font-weight:600;}
+  .brand-mark{width:34px; height:34px; flex-shrink:0;}
+  .brand-mark circle{fill:none; stroke:var(--gold); stroke-width:2;}
+  .brand-mark text{font-family:'Fraunces',serif; font-weight:600; fill:var(--gold);}
+  .nav-links{display:flex; align-items:center; gap:34px; font-size:14.5px; font-weight:600; color:#c7cbdb;}
+  .nav-links a{opacity:.9; transition:opacity .2s;}
+  .nav-links a:hover{opacity:1; color:var(--white);}
+  .nav-cta{
+    background:linear-gradient(135deg, var(--blue), var(--blue-deep));
+    padding:11px 22px; border-radius:100px; font-weight:700; font-size:14px;
+    box-shadow:0 8px 24px -8px rgba(47,111,237,.6);
+    border:1px solid rgba(255,255,255,.08);
+  }
+  .nav-cta:hover{filter:brightness(1.08);}
+  .burger{display:none; flex-direction:column; gap:5px; background:none; border:none;}
+  .burger span{width:22px; height:2px; background:var(--white);}
+  .mobile-menu{
+    display:none; position:fixed; inset:0 0 0 0; top:64px; z-index:90;
+    background:var(--ink); padding:30px 28px; flex-direction:column; gap:22px;
+    font-size:18px; font-weight:600;
+  }
+  .mobile-menu.open{display:flex;}
+
+  @media (max-width:860px){
+    .nav-links{display:none;}
+    .burger{display:flex;}
+  }
+
+  /* ============ HERO ============ */
+  .hero{
+    position:relative;
+    padding:168px 0 110px;
+    background:
+      radial-gradient(ellipse 900px 500px at 85% -10%, rgba(47,111,237,.25), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 0% 20%, rgba(201,162,109,.09), transparent 60%);
+    overflow:hidden;
+  }
+  .hero .wrap{display:grid; grid-template-columns:1.05fr .95fr; gap:60px; align-items:center;}
+  .hero h1{
+    font-size:clamp(2.4rem, 4.4vw, 3.6rem);
+    line-height:1.08;
+    margin:18px 0 22px;
+  }
+  .hero h1 em{font-style:italic; color:var(--blue-light);}
+  .hero p.lead{font-size:17px; color:#c3c8db; max-width:480px; margin-bottom:34px;}
+  .btn-row{display:flex; gap:14px; flex-wrap:wrap;}
+  .btn{
+    display:inline-flex; align-items:center; gap:9px;
+    padding:15px 26px; border-radius:100px; font-weight:700; font-size:14.5px;
+    transition:transform .2s ease, filter .2s ease;
+  }
+  .btn:hover{transform:translateY(-2px);}
+  .btn-primary{
+    background:linear-gradient(135deg, var(--blue), var(--blue-deep));
+    color:#fff; box-shadow:0 14px 30px -10px rgba(47,111,237,.55);
+  }
+  .btn-ghost{
+    border:1px solid var(--panel-border); color:var(--white); background:rgba(255,255,255,.02);
+  }
+  .btn-ghost:hover{border-color:rgba(255,255,255,.3);}
+  .btn-gold{ background:linear-gradient(135deg, var(--gold-light), var(--gold)); color:#241a0a; }
+
+  .trust-strip{display:flex; gap:26px; flex-wrap:wrap; margin-top:40px;}
+  .trust-item{display:flex; align-items:center; gap:9px; font-size:13px; color:var(--muted); font-weight:600;}
+  .trust-item svg{width:16px; height:16px; stroke:var(--gold); flex-shrink:0;}
+
+  /* Hero mock card */
+  .invite-mock{
+    position:relative; border-radius:28px;
+    background:linear-gradient(160deg, var(--panel-2), var(--panel) 70%);
+    border:1px solid var(--panel-border);
+    padding:26px; box-shadow:var(--shadow);
+  }
+  .invite-mock::before{
+    content:""; position:absolute; inset:-1px; border-radius:28px; padding:1px;
+    background:linear-gradient(135deg, rgba(122,162,255,.5), transparent 40%, rgba(201,162,109,.35));
+    -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite:xor; mask-composite:exclude;
+    pointer-events:none;
+  }
+  .mock-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;}
+  .mock-tag{font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--gold); font-weight:700;}
+  .mock-dots{display:flex; gap:5px;}
+  .mock-dots span{width:6px; height:6px; border-radius:50%; background:var(--muted-2);}
+  .mock-hero-img{
+    height:150px; border-radius:16px; margin-bottom:18px;
+    background:linear-gradient(135deg, #1c3f9c, #2f6fed 55%, #7aa2ff);
+    position:relative; overflow:hidden;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces',serif; font-size:15px; letter-spacing:.04em;
+  }
+  .mock-hero-img .confetti{position:absolute; inset:0;}
+  .confetti span{
+    position:absolute; width:6px; height:6px; border-radius:2px;
+    background:var(--gold-light); opacity:.85;
+    animation:float 5s ease-in-out infinite;
+  }
+  .confetti span:nth-child(1){top:15%; left:12%; animation-delay:0s;}
+  .confetti span:nth-child(2){top:60%; left:80%; background:#fff; animation-delay:1s;}
+  .confetti span:nth-child(3){top:75%; left:25%; animation-delay:2s;}
+  .confetti span:nth-child(4){top:30%; left:65%; background:var(--white); animation-delay:1.6s;}
+  @keyframes float{
+    0%,100%{transform:translateY(0) rotate(0deg); opacity:.4;}
+    50%{transform:translateY(-14px) rotate(120deg); opacity:1;}
+  }
+  .mock-names{font-family:'Fraunces',serif; font-size:19px; margin-bottom:4px;}
+  .mock-sub{font-size:12.5px; color:var(--muted); margin-bottom:16px;}
+  .countdown{display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:18px;}
+  .countdown div{
+    background:var(--panel); border:1px solid var(--panel-border); border-radius:10px;
+    text-align:center; padding:9px 4px;
+  }
+  .countdown div b{display:block; font-size:18px; font-family:'Fraunces',serif;}
+  .countdown div span{font-size:9.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em;}
+  .mock-actions{display:flex; gap:8px;}
+  .mock-actions button{
+    flex:1; padding:10px; border-radius:10px; border:none; font-size:12.5px; font-weight:700;
+  }
+  .mock-actions .yes{background:var(--blue); color:#fff;}
+  .mock-actions .no{background:transparent; border:1px solid var(--panel-border); color:var(--muted);}
+  .mock-pin{
+    margin-top:14px; display:flex; align-items:center; gap:8px; font-size:12px; color:var(--muted);
+    border-top:1px solid var(--panel-border); padding-top:14px;
+  }
+  .mock-pin svg{width:14px; height:14px; stroke:var(--gold);}
+
+  @media (max-width:900px){
+    .hero .wrap{grid-template-columns:1fr;}
+    .hero{padding-top:130px;}
+  }
+
+  /* ============ SECTION GENERIC ============ */
+  section{padding:110px 0;}
+  .section-head{max-width:640px; margin-bottom:56px;}
+  .section-head h2{font-size:clamp(1.9rem,3vw,2.6rem); margin-top:14px;}
+  .section-head p{color:var(--muted); margin-top:14px; font-size:15.5px;}
+
+  /* ============ MODELOS ============ */
+  .models{background:var(--panel);}
+  .model-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:26px;}
+  .model-card{
+    background:linear-gradient(170deg, var(--panel-2), #101a35);
+    border:1px solid var(--panel-border); border-radius:var(--radius-lg);
+    overflow:hidden; display:flex; flex-direction:column;
+    transition:transform .35s ease, box-shadow .35s ease;
+  }
+  .model-card:hover{transform:translateY(-6px); box-shadow:var(--shadow);}
+  .model-preview{
+    height:190px; position:relative; display:flex; align-items:flex-end; padding:18px;
+  }
+  .model-preview.theme-wedding{background:linear-gradient(150deg,#060a15,#1c3f9c 60%, #7aa2ff);}
+  .model-preview.theme-birthday{background:linear-gradient(150deg,#060a15,#2f6fed 45%, #c9a26d);}
+  .model-preview.theme-debutante{background:linear-gradient(155deg,#060a15,#142457 45%, #e3caa0);}
+  .model-preview.theme-baby{background:linear-gradient(150deg,#060a15,#274a9e 40%, #d9b872);}
+  .preview-chip{
+    background:rgba(8,13,26,.55); backdrop-filter:blur(6px);
+    border:1px solid rgba(255,255,255,.16); border-radius:100px;
+    padding:7px 14px; font-size:11.5px; font-weight:700; display:flex; align-items:center; gap:6px;
+  }
+  .preview-chip svg{width:12px; height:12px;}
+  .model-body{padding:26px; display:flex; flex-direction:column; gap:16px; flex:1;}
+  .model-cat{font-size:11.5px; text-transform:uppercase; letter-spacing:.09em; color:var(--gold); font-weight:700;}
+  .model-body h3{font-size:22px;}
+  .model-feats{display:flex; flex-direction:column; gap:9px;}
+  .model-feats li{display:flex; gap:9px; font-size:13.5px; color:#c7cbdb; align-items:flex-start;}
+  .model-feats svg{width:16px; height:16px; stroke:var(--blue-light); flex-shrink:0; margin-top:1px;}
+  .model-foot{margin-top:auto; display:flex; gap:10px; padding-top:6px;}
+  .model-foot .btn{padding:11px 18px; font-size:13px;}
+
+  /* ---- Personalize do seu jeito ---- */
+  .personalize{margin-top:64px; padding-top:56px; border-top:1px solid var(--panel-border);}
+  .personalize-head{max-width:560px; margin:0 auto 40px; text-align:center;}
+  .personalize-head h3{font-size:clamp(1.6rem,2.6vw,2.1rem); margin-top:12px;}
+  .personalize-head p{color:var(--muted); margin-top:12px; font-size:14.5px;}
+  .format-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:20px;}
+  .format-card{
+    position:relative; padding:28px 22px; border-radius:var(--radius-md);
+    border:1px solid var(--panel-border); background:linear-gradient(170deg, var(--panel-2), #101a35);
+    display:flex; flex-direction:column; gap:12px; text-align:left;
+    transition:transform .3s ease, border-color .3s ease;
+  }
+  .format-card:hover{transform:translateY(-5px); border-color:rgba(201,162,109,.4);}
+  .format-card.featured{border-color:rgba(201,162,109,.55); background:linear-gradient(170deg, #1a2447, var(--panel-2));}
+  .format-badge{
+    position:absolute; top:-12px; left:22px; background:linear-gradient(135deg,var(--gold-light),var(--gold));
+    color:#241a0a; font-size:10.5px; font-weight:800; padding:4px 11px; border-radius:100px; letter-spacing:.03em;
+  }
+  .format-icon{
+    width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center;
+    background:rgba(201,162,109,.14);
+  }
+  .format-icon svg{width:20px; height:20px; stroke:var(--gold-light);}
+  .format-card h4{font-size:16.5px;}
+  .format-card p{font-size:13px; color:var(--muted); flex:1;}
+  .format-card .btn{width:100%; justify-content:center; padding:11px; font-size:13px;}
+  @media (max-width:900px){ .format-grid{grid-template-columns:1fr 1fr;} }
+  @media (max-width:560px){ .format-grid{grid-template-columns:1fr;} }
+
+  /* ============ PROCESS ============ */
+  .process-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:22px; counter-reset:step;}
+  .step{position:relative; padding:28px 22px; border:1px solid var(--panel-border); border-radius:var(--radius-md); background:var(--panel-2);}
+  .step .num{
+    font-family:'Fraunces',serif; font-size:34px; color:transparent;
+    -webkit-text-stroke:1.3px var(--blue-light);
+    margin-bottom:16px; display:block;
+  }
+  .step h4{font-size:16.5px; margin-bottom:8px;}
+  .step p{font-size:13.5px; color:var(--muted);}
+  .process-grid .step:not(:last-child)::after{
+    content:""; position:absolute; top:44px; right:-22px; width:22px; height:1px;
+    background:linear-gradient(90deg, var(--panel-border), transparent);
+  }
+  @media (max-width:900px){
+    .process-grid{grid-template-columns:1fr 1fr;}
+    .process-grid .step:not(:last-child)::after{display:none;}
+  }
+
+  /* ============ VANTAGENS ============ */
+  .adv-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
+  .adv-card{
+    padding:30px 26px; border-radius:var(--radius-md); border:1px solid var(--panel-border);
+    background:linear-gradient(160deg, var(--panel-2), transparent);
+  }
+  .adv-icon{
+    width:46px; height:46px; border-radius:12px; display:flex; align-items:center; justify-content:center;
+    background:rgba(47,111,237,.12); margin-bottom:18px;
+  }
+  .adv-icon svg{width:22px; height:22px; stroke:var(--blue-light);}
+  .adv-card h3{font-size:17.5px; margin-bottom:8px;}
+  .adv-card p{font-size:13.8px; color:var(--muted);}
+
+  @media (max-width:900px){ .adv-grid{grid-template-columns:1fr 1fr;} .model-grid{grid-template-columns:1fr;} }
+  @media (max-width:600px){ .adv-grid{grid-template-columns:1fr;} }
+
+  /* ============ PRICING ============ */
+  /* pricing styles removed — plans section replaced by "Personalize do seu jeito" */
+
+  /* ============ TESTIMONIALS ============ */
+  .testi-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(250px,1fr)); gap:22px;}
+  .testi-card{
+    padding:28px; border-radius:var(--radius-md); border:1px solid var(--panel-border);
+    background:var(--panel-2);
+  }
+  .stars{display:flex; gap:3px; margin-bottom:16px;}
+  .stars svg{width:14px; height:14px; fill:var(--gold); stroke:none;}
+  .testi-card p.quote{font-size:14.5px; color:#d3d7e6; margin-bottom:20px; font-style:italic;}
+  .testi-who{display:flex; align-items:center; gap:12px;}
+  .testi-avatar{
+    width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces',serif; font-weight:600; font-size:14px;
+    background:linear-gradient(135deg, var(--blue), var(--blue-deep));
+  }
+  .testi-who b{font-size:13.5px; display:block;}
+  .testi-who span{font-size:12px; color:var(--muted);}
+  @media (max-width:900px){ .testi-grid{grid-template-columns:1fr;} }
+
+  /* ============ FAQ ============ */
+  .faq-list{display:flex; flex-direction:column; gap:14px; max-width:760px;}
+  .faq-item{border:1px solid var(--panel-border); border-radius:var(--radius-md); background:var(--panel-2); overflow:hidden;}
+  .faq-item summary{
+    list-style:none; cursor:pointer; padding:20px 24px; display:flex; justify-content:space-between; align-items:center;
+    font-weight:700; font-size:15px;
+  }
+  .faq-item summary::-webkit-details-marker{display:none;}
+  .faq-item summary .plus{
+    width:20px; height:20px; border-radius:50%; border:1px solid var(--panel-border);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-left:16px;
+    position:relative;
+  }
+  .faq-item summary .plus::before, .faq-item summary .plus::after{
+    content:""; position:absolute; background:var(--blue-light);
+  }
+  .faq-item summary .plus::before{width:9px; height:1.4px;}
+  .faq-item summary .plus::after{width:1.4px; height:9px; transition:transform .25s ease;}
+  .faq-item[open] summary .plus::after{transform:rotate(90deg); opacity:0;}
+  .faq-item .faq-a{padding:0 24px 22px; font-size:14px; color:var(--muted); max-width:640px;}
+
+  /* ============ CTA BANNER ============ */
+  .cta-banner{
+    background:linear-gradient(135deg, #142457, #1c3f9c 55%, #2f6fed);
+    border-radius:var(--radius-lg); padding:64px 50px; text-align:center;
+    position:relative; overflow:hidden;
+    border:1px solid rgba(201,162,109,.35);
+    box-shadow:0 0 0 1px rgba(201,162,109,.08), var(--shadow);
+  }
+  .cta-banner h2{font-size:clamp(1.8rem,3vw,2.5rem); margin-bottom:14px;}
+  .cta-banner p{color:rgba(255,255,255,.8); margin-bottom:30px; font-size:15.5px;}
+  .cta-banner .btn-row{justify-content:center;}
+
+  /* ============ FOOTER ============ */
+  footer{padding:70px 0 30px; border-top:1px solid var(--panel-border);}
+  .footer-grid{display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:40px; margin-bottom:50px;}
+  .footer-brand p{color:var(--muted); font-size:13.5px; margin-top:14px; max-width:280px;}
+  .footer-col h5{font-size:13px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:16px;}
+  .footer-col a{display:block; font-size:14px; color:#c7cbdb; margin-bottom:11px;}
+  .footer-col a:hover{color:var(--white);}
+  .footer-bottom{
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;
+    font-size:12.5px; color:var(--muted-2); border-top:1px solid var(--panel-border); padding-top:26px;
+  }
+  @media (max-width:800px){ .footer-grid{grid-template-columns:1fr;} }
+
+  /* ============ WHATSAPP FLOAT ============ */
+  .wa-float{
+    position:fixed; bottom:24px; right:24px; z-index:80;
+    width:58px; height:58px; border-radius:50%;
+    background:#25d366; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 10px 26px -6px rgba(37,211,102,.6);
+  }
+  .wa-float svg{width:28px; height:28px; fill:#fff;}
+  .wa-float:hover{transform:scale(1.06);}
+
+  /* ============ MODAL ============ */
+  .modal-overlay{
+    position:fixed; inset:0; z-index:200; background:rgba(4,6,14,.72); backdrop-filter:blur(4px);
+    display:flex; align-items:center; justify-content:center; padding:20px;
+    opacity:0; visibility:hidden; transition:opacity .25s ease, visibility .25s ease;
+  }
+  .modal-overlay.open{opacity:1; visibility:visible;}
+  .modal-box{
+    background:var(--panel-2); border:1px solid var(--panel-border); border-radius:var(--radius-lg);
+    max-width:520px; width:100%; padding:36px; max-height:88vh; overflow-y:auto;
+    transform:translateY(14px); transition:transform .25s ease;
+  }
+  .modal-overlay.open .modal-box{transform:translateY(0);}
+  .modal-box .close{
+    float:right; background:none; border:none; color:var(--muted); font-size:22px; line-height:1;
+  }
+  .modal-box h3{font-size:22px; margin-bottom:6px;}
+  .modal-box .sub{color:var(--muted); font-size:13.5px; margin-bottom:26px;}
+  .field{margin-bottom:16px;}
+  .field label{display:block; font-size:12.5px; font-weight:700; margin-bottom:7px; color:#c7cbdb;}
+  .field input, .field select, .field textarea{
+    width:100%; padding:12px 14px; border-radius:10px; border:1px solid var(--panel-border);
+    background:var(--panel); color:var(--white); font-family:inherit; font-size:14px;
+  }
+  .field textarea{resize:vertical; min-height:80px;}
+  .field input:focus, .field select:focus, .field textarea:focus{outline:2px solid var(--blue); outline-offset:1px;}
+  .modal-box .btn{width:100%; justify-content:center; margin-top:6px;}
+
+  /* Preview modal (models) */
+  .preview-modal .modal-box{max-width:340px; padding:0; overflow:hidden;}
+  .preview-modal .modal-box .close{position:absolute; top:14px; right:16px; z-index:2; color:#fff;}
+
+  /* reveal on scroll */
+  .reveal{opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease;}
+  .reveal.in{opacity:1; transform:translateY(0);}
+
+  :focus-visible{outline:2px solid var(--blue-light); outline-offset:2px;}
+</style>
+</head>
+<body class="locked">
+
+<!-- ===================== INTRO LOADER ===================== -->
+<div class="intro-loader" id="introLoader">
+  <svg class="emblem" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+    <circle class="ring ring-outer" cx="110" cy="110" r="110"/>
+    <circle class="ring ring-inner" cx="110" cy="110" r="95"/>
+    <rect class="ornament o1" x="103" y="3" width="14" height="14"/>
+    <rect class="ornament o2" x="203" y="103" width="14" height="14"/>
+    <rect class="ornament o3" x="103" y="203" width="14" height="14"/>
+    <rect class="ornament o4" x="3" y="103" width="14" height="14"/>
+    <path class="sparkle s1" d="M178,44 L181,53 L190,56 L181,59 L178,68 L175,59 L166,56 L175,53 Z"/>
+    <path class="sparkle s2" d="M40,158 L42,164 L48,166 L42,168 L40,174 L38,168 L32,166 L38,164 Z"/>
+    <path class="sparkle s3" d="M52,48 L54,53 L59,55 L54,57 L52,62 L50,57 L45,55 L50,53 Z"/>
+    <text class="jc-letters" x="110" y="132" font-size="78" text-anchor="middle">JC</text>
+  </svg>
+  <div class="intro-wordmark">
+    <span class="jc">Jc convites</span>
+    <small>Convites Digitais</small>
+  </div>
+  <button class="skip" id="skipIntro">Pular animação →</button>
+</div>
+
+<!-- ===================== HEADER ===================== -->
+<header id="siteHeader">
+  <div class="wrap">
+    <nav>
+      <a href="#top" class="brand">
+        <svg class="brand-mark" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="22" cy="22" r="20"/>
+          <text x="22" y="30" font-size="18" text-anchor="middle">JC</text>
+        </svg>
+        Jc convites
+      </a>
+      <div class="nav-links">
+        <a href="#modelos">Modelos</a>
+        <a href="#como-funciona">Como Funciona</a>
+        <a href="#vantagens">Vantagens</a>
+        <a href="#personalize">Personalize</a>
+        <a href="#feedbacks">Feedbacks</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <a href="#" class="nav-cta" id="openOrcamentoNav">Pedir Orçamento</a>
+      <button class="burger" id="burgerBtn" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+    </nav>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#modelos">Modelos</a>
+    <a href="#como-funciona">Como Funciona</a>
+    <a href="#vantagens">Vantagens</a>
+    <a href="#personalize">Personalize</a>
+    <a href="#feedbacks">Feedbacks</a>
+    <a href="#faq">FAQ</a>
+    <a href="#" class="nav-cta" style="text-align:center" id="openOrcamentoMobile">Pedir Orçamento</a>
+  </div>
+</header>
+
+<main id="top">
+  <!-- ===================== HERO ===================== -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="reveal in">
+        <span class="eyebrow">Especialista em Convites Interativos</span>
+        <h1>Surpreenda seus convidados <em>antes mesmo</em> da festa começar.</h1>
+        <p class="lead">Convites digitais sob medida com confirmação de presença, mapa integrado, lista de presentes e uma experiência que os convidados vão querer abrir de novo.</p>
+        <div class="btn-row">
+          <a href="#" class="btn btn-primary" id="openOrcamentoHero">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+            Solicitar Orçamento no WhatsApp
+          </a>
+          <a href="#modelos" class="btn btn-ghost">Ver Catálogo</a>
+        </div>
+        <div class="trust-strip">
+          <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 13l4 4L19 7"/></svg>Entrega em até 5 dias úteis</div>
+          <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 13l4 4L19 7"/></svg>Suporte direto no WhatsApp</div>
+          <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 13l4 4L19 7"/></svg>100% personalizado</div>
+        </div>
+      </div>
+
+      <div class="invite-mock reveal in">
+        <div class="mock-top">
+          <span class="mock-tag">Prévia · Casamento</span>
+          <div class="mock-dots"><span></span><span></span><span></span></div>
+        </div>
+        <div class="mock-hero-img">
+          <div class="confetti"><span></span><span></span><span></span><span></span></div>
+          <span>Nosso grande dia</span>
+        </div>
+        <div class="mock-names">Marina &amp; Rafael</div>
+        <div class="mock-sub">12 de dezembro de 2026 · Vitória, ES</div>
+        <div class="countdown" id="countdown">
+          <div><b id="cd-days">--</b><span>dias</span></div>
+          <div><b id="cd-hours">--</b><span>horas</span></div>
+          <div><b id="cd-min">--</b><span>min</span></div>
+          <div><b id="cd-sec">--</b><span>seg</span></div>
+        </div>
+        <div class="mock-actions">
+          <button class="yes">✓ Vou comparecer</button>
+          <button class="no">Não poderei ir</button>
+        </div>
+        <div class="mock-pin">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s7-7.4 7-12.5A7 7 0 0 0 5 9.5C5 14.6 12 22 12 22z"/><circle cx="12" cy="9.5" r="2.4"/></svg>
+          Espaço Villa Bella — abrir no Maps
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== MODELOS ===================== -->
+  <section class="models" id="modelos">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Catálogo Interativo</span>
+        <h2>Um modelo para cada tipo de celebração</h2>
+        <p>Cada convite é desenhado do zero para o seu evento — clique em "Pré-visualizar" para sentir a experiência que o convidado vai ter.</p>
+      </div>
+
+      <div class="model-grid">
+        <!-- Casamento -->
+        <article class="model-card reveal">
+          <div class="model-preview theme-wedding">
+            <span class="preview-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21c-5-3.5-8-6.6-8-10a4.8 4.8 0 0 1 8-3.6A4.8 4.8 0 0 1 20 11c0 3.4-3 6.5-8 10z"/></svg>Casamento &amp; Bodas</span>
+          </div>
+          <div class="model-body">
+            <span class="model-cat">Elegante · Formal</span>
+            <h3>Casamento Elegante</h3>
+            <ul class="model-feats">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M5 13l4 4L19 7"/></svg>Confirmação de presença (RSVP) com lista de acompanhantes</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M5 13l4 4L19 7"/></svg>Localização integrada ao Google Maps e Waze</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M5 13l4 4L19 7"/></svg>Lista de presentes com pagamento via PIX</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M5 13l4 4L19 7"/></svg>Contagem regressiva e galeria de fotos do casal</li>
+            </ul>
+            <div class="model-foot">
+              <a href="https://seuconvite.github.io/seu-convite-digital/casamento.html" target="_blank" rel="noopener" class="btn btn-primary">👁️ Testar Demonstrativo</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Aniversário -->
+        <article class="model-card reveal">
+          <div class="model-preview theme-birthday">
+            <span class="preview-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M8 6l1-2M16 6l-1-2M4 22h16M6 22V11a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v11"/></svg>Aniversários &amp; Temáticos</span>
+          </div>
+          <div class="model-body">
+            <span class="model-cat">Vibrante · Divertido</span>
+            <h3>Aniversários</h3>
+            <ul class="model-feats">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M5 13l4 4L19 7"/></svg>Design alegre com cores e tema à sua escolha</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M5 13l4 4L19 7"/></svg>Confirmação rápida direto pelo WhatsApp</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M5 13l4 4L19 7"/></svg>Botão "Como Chegar" no Waze ou Google Maps</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M5 13l4 4L19 7"/></svg>Animações sutis e interativas na abertura</li>
+            </ul>
+            <div class="model-foot">
+              <a href="https://seuconvite.github.io/convite-celi-18/" target="_blank" rel="noopener" class="btn btn-primary">👁️ Testar Demonstrativo</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- 15 anos -->
+        <article class="model-card reveal">
+          <div class="model-preview theme-debutante">
+            <span class="preview-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 6.8L21 10l-5 4.6L17.4 22 12 18.3 6.6 22 8 14.6 3 10l6.6-1.2z"/></svg>15 Anos &amp; Debutante</span>
+          </div>
+          <div class="model-body">
+            <span class="model-cat">Sofisticado · Rose Gold</span>
+            <h3>15 Anos / Debutante</h3>
+            <ul class="model-feats">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M5 13l4 4L19 7"/></svg>Linha do tempo do evento: chá, cerimônia e festa</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M5 13l4 4L19 7"/></svg>Dress code e paleta de cores em destaque</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M5 13l4 4L19 7"/></svg>Hashtag do evento para redes sociais</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M5 13l4 4L19 7"/></svg>RSVP com contagem de convidados por família</li>
+            </ul>
+            <div class="model-foot">
+              <button class="btn btn-primary" onclick="openPreview('debutante')">👁️ Pré-visualizar</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Chá de bebê -->
+        <article class="model-card reveal">
+          <div class="model-preview theme-baby">
+            <span class="preview-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 12a3 3 0 0 1 6 0c0 2-3 3-3 5"/></svg>Chá de Bebê &amp; Revelação</span>
+          </div>
+          <div class="model-body">
+            <span class="model-cat">Delicado · Pastel</span>
+            <h3>Chá de Bebê / Revelação</h3>
+            <ul class="model-feats">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M5 13l4 4L19 7"/></svg>Contagem regressiva para o grande dia</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M5 13l4 4L19 7"/></svg>Lista de presentes / enxoval do bebê</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M5 13l4 4L19 7"/></svg>Confirmação de presença simplificada</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2"><path d="M5 13l4 4L19 7"/></svg>Paleta em tons pastel personalizável</li>
+            </ul>
+            <div class="model-foot">
+              <button class="btn btn-primary" onclick="openPreview('baby')">👁️ Pré-visualizar</button>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="personalize reveal" id="personalize">
+        <div class="personalize-head">
+          <span class="eyebrow">Do jeito que você quiser</span>
+          <h3>Personalize do seu jeito</h3>
+          <p>Qualquer um dos modelos acima pode ser feito no formato que fizer mais sentido pro seu evento e pro seu bolso.</p>
+        </div>
+        <div class="format-grid">
+          <div class="format-card">
+            <div class="format-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div>
+            <h4>PDF</h4>
+            <p>Convite interativo em PDF com links clicáveis, pronto para enviar no WhatsApp.</p>
+            <button class="btn btn-ghost" onclick="openOrcamento('PDF')">Solicitar em PDF</button>
+          </div>
+          <div class="format-card">
+            <div class="format-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></svg></div>
+            <h4>Site</h4>
+            <p>Página web completa, com RSVP, mapa, contagem regressiva e lista de presentes.</p>
+            <button class="btn btn-ghost" onclick="openOrcamento('Site')">Solicitar Site</button>
+          </div>
+          <div class="format-card featured">
+            <span class="format-badge">Mais escolhido</span>
+            <div class="format-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M4 9h16M9 4v16"/></svg></div>
+            <h4>Site + PDF</h4>
+            <p>O melhor dos dois formatos: site interativo completo e PDF pronto para compartilhar.</p>
+            <button class="btn btn-primary" onclick="openOrcamento('Site + PDF')">Solicitar Site + PDF</button>
+          </div>
+          <div class="format-card">
+            <div class="format-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.5 7.5"/></svg></div>
+            <h4>Personalizado</h4>
+            <p>Conte sua ideia e montamos um formato exclusivo, do seu jeito, sem moldes prontos.</p>
+            <button class="btn btn-ghost" onclick="openOrcamento('Personalizado')">Solicitar Personalizado</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== COMO FUNCIONA ===================== -->
+  <section id="como-funciona">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Do primeiro contato ao envio</span>
+        <h2>Como funciona o processo</h2>
+        <p>Um passo a passo simples — você acompanha tudo pelo WhatsApp, sem precisar entender de tecnologia.</p>
+      </div>
+      <div class="process-grid">
+        <div class="step reveal"><span class="num">01</span><h4>Briefing</h4><p>Conversamos sobre o estilo, cores, tema e informações do seu evento.</p></div>
+        <div class="step reveal"><span class="num">02</span><h4>Design exclusivo</h4><p>Criamos a arte e identidade visual do convite do zero, do seu jeito.</p></div>
+        <div class="step reveal"><span class="num">03</span><h4>Desenvolvimento</h4><p>Montamos RSVP, mapa, contagem regressiva e demais interações.</p></div>
+        <div class="step reveal"><span class="num">04</span><h4>Entrega &amp; envio</h4><p>Você recebe o link pronto para compartilhar no WhatsApp e redes sociais.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== VANTAGENS ===================== -->
+  <section class="advantages" id="vantagens">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Por que ir para o digital</span>
+        <h2>Por que escolher convites digitais?</h2>
+      </div>
+      <div class="adv-grid">
+        <div class="adv-card reveal">
+          <div class="adv-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z"/></svg></div>
+          <h3>Envio instantâneo</h3>
+          <p>Envie para todos os convidados via WhatsApp ou redes sociais, sem limite de entregas ou custo de correio.</p>
+        </div>
+        <div class="adv-card reveal">
+          <div class="adv-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s7-7.4 7-12.5A7 7 0 0 0 5 9.5C5 14.6 12 22 12 22z"/><circle cx="12" cy="9.5" r="2.4"/></svg></div>
+          <h3>Botões clicáveis</h3>
+          <p>Acesso em 1 clique ao Waze/Google Maps do local, lista de presentes e confirmação de presença.</p>
+        </div>
+        <div class="adv-card reveal">
+          <div class="adv-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8 6 5 9.5 5 13.5A7 7 0 0 0 19 13.5C19 9.5 16 6 12 2z"/></svg></div>
+          <h3>Ecológico e econômico</h3>
+          <p>Economize no frete e na impressão gráfica enquanto preserva o meio ambiente.</p>
+        </div>
+        <div class="adv-card reveal">
+          <div class="adv-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.5 7.5"/></svg></div>
+          <h3>100% personalizado</h3>
+          <p>Criação sob medida do seu jeito. Cores, arte e detalhes exatamente como você imaginar.</p>
+        </div>
+        <div class="adv-card reveal">
+          <div class="adv-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-6 4 3 5-7"/></svg></div>
+          <h3>Painel de confirmações</h3>
+          <p>Acompanhe em tempo real quem já confirmou presença, direto do seu celular.</p>
+        </div>
+        <div class="adv-card reveal">
+          <div class="adv-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <h3>Dados protegidos</h3>
+          <p>As informações dos seus convidados ficam seguras e nunca são compartilhadas com terceiros.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FEEDBACKS ===================== -->
+  <section id="feedbacks">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Feedbacks</span>
+        <h2>O que dizem quem já criou seu convite</h2>
+      </div>
+      <div class="testi-grid">
+        <div class="testi-card reveal">
+          <div class="stars">★★★★★</div>
+          <p class="quote">Facilitou demais a organização da minha festa! O link da lista de presentes funcionou perfeitamente e o design do convite é simplesmente lindo. Recomendo muito para quem quer praticidade sem abrir mão da estética.</p>
+          <div class="testi-who">
+            <div class="testi-avatar">F</div>
+            <div><b>Fernanda</b><span>Aniversário Adulto</span></div>
+          </div>
+        </div>
+        <div class="testi-card reveal">
+          <div class="stars">★★★★★</div>
+          <p class="quote">Recebemos elogios de vários convidados só pela forma como o convite abria. Facilitou muito o controle de quem ia comparecer.</p>
+          <div class="testi-who">
+            <div class="testi-avatar">M</div>
+            <div><b>Marina R.</b><span>Casamento · Vitória, ES</span></div>
+          </div>
+        </div>
+        <div class="testi-card reveal">
+          <div class="stars">★★★★★</div>
+          <p class="quote">Meu filho amou ver o tema do aniversário dele animado na tela. O botão de confirmação pelo WhatsApp poupou muito tempo.</p>
+          <div class="testi-who">
+            <div class="testi-avatar">T</div>
+            <div><b>Thiago A.</b><span>Aniversário Infantil</span></div>
+          </div>
+        </div>
+        <div class="testi-card reveal">
+          <div class="stars">★★★★★</div>
+          <p class="quote">O convite de 15 anos da minha filha ficou com a cara dela. Todo o processo foi conduzido pelo WhatsApp, bem tranquilo.</p>
+          <div class="testi-who">
+            <div class="testi-avatar">C</div>
+            <div><b>Carla M.</b><span>15 Anos / Debutante</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FAQ ===================== -->
+  <section id="faq">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Dúvidas frequentes</span>
+        <h2>Perguntas e respostas</h2>
+      </div>
+      <div class="faq-list">
+        <details class="faq-item reveal">
+          <summary>Quanto tempo leva para ficar pronto? <span class="plus"></span></summary>
+          <p class="faq-a">Em média de 3 a 7 dias úteis após o briefing, dependendo da complexidade do projeto e do plano escolhido.</p>
+        </details>
+        <details class="faq-item reveal">
+          <summary>Preciso entender de tecnologia para usar? <span class="plus"></span></summary>
+          <p class="faq-a">Não. Você só participa do briefing e recebe o link pronto — nós cuidamos de toda a parte técnica.</p>
+        </details>
+        <details class="faq-item reveal">
+          <summary>Funciona direto pelo WhatsApp? <span class="plus"></span></summary>
+          <p class="faq-a">Sim. O convite pode ser enviado por link no WhatsApp, redes sociais ou e-mail, sem limite de convidados.</p>
+        </details>
+        <details class="faq-item reveal">
+          <summary>Posso editar depois que o convite estiver pronto? <span class="plus"></span></summary>
+          <p class="faq-a">Pequenos ajustes de texto e data podem ser feitos após a entrega. Alterações maiores de design são orçadas à parte.</p>
+        </details>
+        <details class="faq-item reveal">
+          <summary>Quais as formas de pagamento? <span class="plus"></span></summary>
+          <p class="faq-a">Combinamos a forma de pagamento diretamente no orçamento, de acordo com o plano e o prazo do seu evento.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CTA FINAL ===================== -->
+  <section>
+    <div class="wrap">
+      <div class="cta-banner reveal">
+        <h2>Pronto para surpreender seus convidados?</h2>
+        <p>Fale agora pelo WhatsApp e receba uma proposta exclusiva para o seu evento.</p>
+        <div class="btn-row">
+          <a href="#" class="btn btn-gold" id="openOrcamentoCta">Solicitar Orçamento Agora</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ===================== FOOTER ===================== -->
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#top" class="brand">
+          <svg class="brand-mark" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="22" cy="22" r="20"/>
+            <text x="22" y="30" font-size="18" text-anchor="middle">JC</text>
+          </svg>
+          Jc convites
+        </a>
+        <p>Convites digitais interativos para casamentos, aniversários, debutantes e chás de bebê — pensados para encantar desde o primeiro clique.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Navegação</h5>
+        <a href="#modelos">Modelos</a>
+        <a href="#vantagens">Vantagens</a>
+        <a href="#personalize">Personalize</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <div class="footer-col">
+        <h5>Contato</h5>
+        <a href="https://wa.me/5527992497940" target="_blank" rel="noopener">WhatsApp</a>
+        <a href="#" id="openOrcamentoFooter">Pedir orçamento</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Jc Convites. Todos os direitos reservados.</span>
+      <span>Feito com carinho para cada celebração.</span>
+    </div>
+  </div>
+</footer>
+
+<a href="https://wa.me/5527992497940" target="_blank" rel="noopener" class="wa-float" aria-label="Falar no WhatsApp">
+  <svg viewBox="0 0 32 32"><path d="M16 3C9 3 3.3 8.7 3.3 15.7c0 2.5.7 4.8 1.9 6.8L3 29l6.7-2.1c1.9 1 4.1 1.6 6.3 1.6 7 0 12.7-5.7 12.7-12.7C28.7 8.7 23 3 16 3zm0 23c-2 0-3.9-.5-5.6-1.5l-.4-.2-4 1.3 1.3-3.9-.3-.4a10.6 10.6 0 0 1-1.7-5.6C5.3 9.9 10.1 5.1 16 5.1S26.7 9.9 26.7 15.7 21.9 26 16 26zm5.8-7.9c-.3-.2-1.9-.9-2.1-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7.1a8.7 8.7 0 0 1-2.6-1.6 9.6 9.6 0 0 1-1.8-2.2c-.2-.3 0-.5.1-.7l.5-.6c.2-.2.2-.3.3-.5s0-.4 0-.5-.7-1.7-1-2.3-.5-.5-.7-.5h-.6a1.2 1.2 0 0 0-.9.4 3.6 3.6 0 0 0-1.1 2.7c0 1.6 1.2 3.1 1.3 3.3s2.3 3.6 5.6 5c.8.3 1.4.5 1.9.7a4.5 4.5 0 0 0 2 .1c.6-.1 1.9-.8 2.2-1.5s.3-1.4.2-1.5-.3-.2-.6-.4z"/></svg>
+</a>
+
+<!-- ===================== MODAL ORÇAMENTO ===================== -->
+<div class="modal-overlay" id="orcamentoModal">
+  <div class="modal-box">
+    <button class="close" id="closeOrcamento" aria-label="Fechar">×</button>
+    <span class="eyebrow">Orçamento sob medida</span>
+    <h3>Consulte valores e prazos</h3>
+    <p class="sub">Preencha os detalhes do seu evento e receba uma proposta exclusiva direto no seu WhatsApp.</p>
+    <form id="orcamentoForm">
+      <div class="field">
+        <label for="f-nome">Seu nome</label>
+        <input type="text" id="f-nome" required placeholder="Como podemos te chamar?">
+      </div>
+      <div class="field">
+        <label for="f-tipo">Tipo do evento</label>
+        <select id="f-tipo" required>
+          <option value="">Selecione uma opção...</option>
+          <option>Casamento</option>
+          <option>Aniversário Infantil</option>
+          <option>15 Anos / Debutante</option>
+          <option>Chá de Bebê / Revelação</option>
+          <option>Outro tipo de evento</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="f-formato">Formato desejado</label>
+        <select id="f-formato">
+          <option>PDF</option>
+          <option>Site</option>
+          <option>Site + PDF</option>
+          <option>Personalizado</option>
+          <option>Ainda não sei, quero ajuda para escolher</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="f-data">Data estimada do evento</label>
+        <input type="date" id="f-data">
+      </div>
+      <div class="field">
+        <label for="f-detalhes">Detalhes ou tema do evento</label>
+        <textarea id="f-detalhes" placeholder="Conte um pouco sobre o estilo, cores e tema que você imagina..."></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Enviar Pedido pelo WhatsApp</button>
+    </form>
+  </div>
+</div>
+
+<!-- ===================== MODAL PREVIEW (modelos sem link externo) ===================== -->
+<div class="modal-overlay preview-modal" id="previewModal">
+  <div class="modal-box">
+    <button class="close" id="closePreview" aria-label="Fechar">×</button>
+    <div id="previewContent"></div>
+  </div>
+</div>
+
+<script>
+  /* ---------- INTRO LOADER ---------- */
+  const introLoader = document.getElementById('introLoader');
+  function endIntro(){
+    introLoader.classList.add('hide');
+    document.body.classList.remove('locked');
+  }
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduceMotion){
+    endIntro();
+  } else {
+    setTimeout(endIntro, 3100);
+  }
+  document.getElementById('skipIntro').addEventListener('click', endIntro);
+  introLoader.addEventListener('click', endIntro);
+
+  /* ---------- HEADER SCROLL ---------- */
+  const header = document.getElementById('siteHeader');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 20);
+  });
+
+  /* ---------- MOBILE MENU ---------- */
+  const burger = document.getElementById('burgerBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  burger.addEventListener('click', () => mobileMenu.classList.toggle('open'));
+  mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileMenu.classList.remove('open')));
+
+  /* ---------- REVEAL ON SCROLL ---------- */
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  revealEls.forEach(el => io.observe(el));
+
+  /* ---------- COUNTDOWN ---------- */
+  const target = new Date('2026-12-12T18:00:00');
+  function tickCountdown(){
+    const now = new Date();
+    let diff = Math.max(0, target - now);
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    document.getElementById('cd-days').textContent = d;
+    document.getElementById('cd-hours').textContent = String(h).padStart(2,'0');
+    document.getElementById('cd-min').textContent = String(m).padStart(2,'0');
+    document.getElementById('cd-sec').textContent = String(s).padStart(2,'0');
+  }
+  tickCountdown();
+  setInterval(tickCountdown, 1000);
+
+  /* ---------- ORÇAMENTO MODAL ---------- */
+  const orcamentoModal = document.getElementById('orcamentoModal');
+  const formatoSelect = document.getElementById('f-formato');
+  function openOrcamento(formatName){
+    orcamentoModal.classList.add('open');
+    if(formatName){
+      const opts = [...formatoSelect.options];
+      const exact = opts.find(o => o.text.toLowerCase() === formatName.toLowerCase());
+      const opt = exact || opts.find(o => o.text.toLowerCase().includes(formatName.toLowerCase()));
+      if(opt) formatoSelect.value = opt.value;
+    }
+  }
+  ['openOrcamentoNav','openOrcamentoMobile','openOrcamentoHero','openOrcamentoCta','openOrcamentoFooter'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.addEventListener('click', (e)=>{ e.preventDefault(); openOrcamento(); });
+  });
+  document.getElementById('closeOrcamento').addEventListener('click', ()=> orcamentoModal.classList.remove('open'));
+  orcamentoModal.addEventListener('click', (e)=>{ if(e.target === orcamentoModal) orcamentoModal.classList.remove('open'); });
+
+  document.getElementById('orcamentoForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const nome = document.getElementById('f-nome').value;
+    const tipo = document.getElementById('f-tipo').value;
+    const formato = document.getElementById('f-formato').value;
+    const data = document.getElementById('f-data').value;
+    const detalhes = document.getElementById('f-detalhes').value;
+    const msg = `Olá! Meu nome é ${nome}. Gostaria de um orçamento para um convite digital.%0A%0A*Tipo de evento:* ${tipo}%0A*Formato desejado:* ${formato}%0A*Data estimada:* ${data || 'a definir'}%0A*Detalhes/tema:* ${detalhes || 'a combinar'}`;
+    window.open(`https://wa.me/5527992497940?text=${msg}`, '_blank');
+  });
+
+  /* ---------- PREVIEW MODAL (modelos sem link externo) ---------- */
+  const previewModal = document.getElementById('previewModal');
+  const previewContent = document.getElementById('previewContent');
+  const previews = {
+    debutante: `
+      <div class="model-preview theme-debutante" style="border-radius:0;">
+        <span class="preview-chip">15 Anos · Debutante</span>
+      </div>
+      <div class="model-body" style="padding:26px;">
+        <span class="model-cat">Sofisticado · Rose Gold</span>
+        <h3>Convite de 15 Anos</h3>
+        <p style="color:var(--muted); font-size:13.5px; margin:10px 0 16px;">Prévia ilustrativa: cerimônia às 16h, chá das debutantes às 19h e festa a partir das 21h — tudo em uma linha do tempo elegante, com RSVP por família e dress code em destaque.</p>
+        <button class="btn btn-primary" style="width:100%; justify-content:center;" onclick="closePreviewModal(); openOrcamento('15 Anos / Debutante');">Solicitar este modelo</button>
+      </div>`,
+    baby: `
+      <div class="model-preview theme-baby" style="border-radius:0;">
+        <span class="preview-chip">Chá de Bebê · Revelação</span>
+      </div>
+      <div class="model-body" style="padding:26px;">
+        <span class="model-cat">Delicado · Pastel</span>
+        <h3>Convite de Chá de Bebê</h3>
+        <p style="color:var(--muted); font-size:13.5px; margin:10px 0 16px;">Prévia ilustrativa: contagem regressiva até o grande dia, lista de enxoval integrada e confirmação simplificada em um toque, em paleta pastel personalizável.</p>
+        <button class="btn btn-primary" style="width:100%; justify-content:center;" onclick="closePreviewModal(); openOrcamento('Chá de Bebê / Revelação');">Solicitar este modelo</button>
+      </div>`
+  };
+  function openPreview(key){
+    previewContent.innerHTML = previews[key];
+    previewModal.classList.add('open');
+  }
+  function closePreviewModal(){ previewModal.classList.remove('open'); }
+  document.getElementById('closePreview').addEventListener('click', closePreviewModal);
+  previewModal.addEventListener('click', (e)=>{ if(e.target === previewModal) closePreviewModal(); });
+</script>
+</body>
+</html>
